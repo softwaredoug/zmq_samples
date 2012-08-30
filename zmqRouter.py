@@ -15,9 +15,6 @@ frontend = context.socket(zmq.ROUTER)
 print "Binding to port %i" % port
 frontend.bind("tcp://*:%i" % port)
 
-poller = zmq.Poller()
-poller.register(frontend, zmq.POLLIN)        
-
 allParts = ()
 
 while True:
