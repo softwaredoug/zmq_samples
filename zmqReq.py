@@ -15,7 +15,7 @@ import cmdPromptUtils
 # or zmqReq.py <port>
 
 if len(sys.argv) < 3:
-    print "usage zmqReq.py <connectPort> <echoTxt>"
+    print "usage zmqReq.py <connectPort0> .. <connectPortN> <echoTxt>"
     cmdPromptUtils.waitExit()
 
 # Boilerplate zmq code, create a context and 
@@ -24,8 +24,10 @@ ctx = zmq.Context()
 sock = ctx.socket(zmq.REQ)
 port = int(sys.argv[1])
 
-# Connect to the socket
-sock.connect("tcp://localhost:%i" % port)
+# Connect to the ports specified
+# on the command prompt
+for port in sys.argv[1:-1]:
+    sock.connect("tcp://localhost:%i" % int(port))
 
 # Grab the text the user wants us to echo
 echoTxt = sys.argv[-1]
