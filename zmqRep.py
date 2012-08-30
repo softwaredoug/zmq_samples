@@ -1,5 +1,13 @@
 import zmq
 import sys
+import cmdPromptUtils
+
+if len(sys.argv) < 2:
+    print "usage zmqRep.py <bindPort>"
+    cmdPromptUtils.waitExit()
+
+cmdPromptUtils.promptExitOnSigInt()
+
 
 ctx = zmq.Context()
 sock = ctx.socket(zmq.REP)

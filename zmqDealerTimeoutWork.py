@@ -1,6 +1,20 @@
 import zmq
 import sys
 import itertools
+from zmqUtils import sendAll, recvAll
+from cmdPromptUtils import waitExit
+# These are simple samples, so for the sake of clarity, there's 
+# not a whole lot of error checking. They eschew the more advanced
+# features of 0mq in preference to demonstrating core concepts.
+#
+# This code demonstrates ZMQ_DEALER. For more information on
+# the behavior of a DEALER socket, check the zmq_socket
+# man page: http://api.zeromq.org/2-1:zmq-socket under the
+# heading for ZMQ_DEALER
+
+if len(sys.argv) < 3:
+    print "usage zmqDealerTimeoutWork.py <port0> ... <portN> echoTxt"
+    waitExit()
 
 ctx = zmq.Context()
 sock = ctx.socket(zmq.DEALER)
@@ -14,7 +28,8 @@ class TimeoutError(Exception):
     pass
 
 def timeoutRcv(sock,timeoutMsec):
-    """ Timeout on work"""
+    """ Timeout on work by using the timeout
+        in poll"""
     poller = zmq.Poller()
     poller.register(sock, zmq.POLLIN)
     socks = dict(poller.poll(timeout=timeoutMsec))
@@ -26,14 +41,16 @@ def timeoutRcv(sock,timeoutMsec):
 
 for i in itertools.count():
     print "Sending..."
-    thisEchoText = echoText + ("(%i)" % i)
-    sock.send(thisEchoText)
+    currEchoText = echoText + ("(%i)" % i)
+    sock.send(currEchoText)
+    # When connecting to a ZMQ_REP, an empty delimiter must be sent,
+    # See the zmq_socket man page for more info
+    #sendAll(sock, ["", currEchoTxt]) 
     print "Receiving..."
     try:
         echoTextBack = timeoutRcv(sock, timeoutMsec=1000)
         print "> %s" % echoTextBack
     except TimeoutError:
-        print "! %s TimedOut!" % thisEchoText
+        print "! %s TimedOut!" % currEchoText
         
-while True:
-    pass
+waitExit()
