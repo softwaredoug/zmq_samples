@@ -5,7 +5,7 @@ import cmdPromptUtils
 # not a whole lot of error checking. They eschew the more advanced
 # features of 0mq in preference to demonstrating core concepts.
 #
-# This code demonstrates ZMQ_REQ socket. For more information on
+# This code demonstrates ZMQ_REQ (request) socket. For more information on
 # the behavior of a REQ socket, check the zmq_socket
 # man page: http://api.zeromq.org/2-1:zmq-socket under the
 # heading for ZMQ_REQ
@@ -15,7 +15,7 @@ import cmdPromptUtils
 # or zmqReq.py <port>
 
 if len(sys.argv) < 3:
-    print "usage zmqReq.py <connectPort> echoTxt"
+    print "usage zmqReq.py <connectPort> <echoTxt>"
     cmdPromptUtils.waitExit()
 
 # Boilerplate zmq code, create a context and 
@@ -34,6 +34,8 @@ echoTxt = sys.argv[-1]
 # trying to do send after a send, or a second
 # recv results in a ZMQError exception
 while True:
-    sock.send(echoTxt)
+    print "Sending %s" % echoTxt
+    sock.send(echoTxt) # send the request
+    print "Receiving..."
     echoedBack = sock.recv()
     print ">%s" % echoedBack
