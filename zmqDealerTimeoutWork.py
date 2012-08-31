@@ -11,6 +11,9 @@ from cmdPromptUtils import waitExit
 # the behavior of a DEALER socket, check the zmq_socket
 # man page: http://api.zeromq.org/2-1:zmq-socket under the
 # heading for ZMQ_DEALER
+#
+# This is a modification of the zmqDealer.py with a timeout waiting
+# for a response.
 
 if len(sys.argv) < 3:
     print "usage zmqDealerTimeoutWork.py <port0> ... <portN> echoTxt"

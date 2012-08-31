@@ -30,6 +30,12 @@ sock.bind("tcp://*:%i" % port)
 # A Rep socket can only serially process
 # requests, recv is called first, then
 # a send, and so-on
+#
+# To quote the man page:
+# > Each request received is fair-queued from among all clients,
+# > and each reply sent is routed to the client that issued the 
+# > last request. If the original requester doesn't exist any 
+# > more the reply is silently discarded.
 while True:
     print "Receiving..."
     echoData = sock.recv()

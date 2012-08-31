@@ -26,15 +26,29 @@ for port in sys.argv[1:-1]:
     sock.connect("tcp://localhost:%i" % int(port))
 echoText = sys.argv[-1]
 
+# A DEALER is an asynchronous REQ socket. Like a REQ socket it
+# can connect to multiple hosts and will request from those
+# hosts in a round-robin fashion. Unlike a REQ socket, the 
+# responses are not processed serially but fair queued.
+#
+# To quote the man page:
+# > Each message sent is round-robinned among all connected 
+# > peers, and each message received is fair-queued from all 
+# > connected peers.
+#
+# Another important note, sometimes the REQ and DEALER sockets
+# get stuck if the other side crashes and the REQ or DEALER is
+# stuck, so implementing a timeout (see zmqDealerTimeoutWork.py)
+# for more.
 for i in itertools.count():
     currEchoTxt = echoText + "(%i)" % i
     print "Sending... %s" % currEchoTxt
     # When connecting to a ZMQ_REP, an empty delimiter must be sent,
     # See the zmq_socket man page for more info
-    #sendAll(sock, ["", currEchoTxt]) 
-    sock.send(currEchoTxt)
+    sendAll(sock, ["", currEchoTxt]) 
+    #sock.send(currEchoTxt)
     print "Receiving..."
-    echoTextBack = sock.recv()
-    print "Rcvd: > %s" % echoTextBack
+    echoTextBack = recvAll(sock)
+    print "Rcvd: > %s" % repr(echoTextBack)
     
 waitExit()

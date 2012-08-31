@@ -35,9 +35,13 @@ echoTxt = sys.argv[-1]
 # A REQ socket can only send/recv serially
 # trying to do send after a send, or a second
 # recv results in a ZMQError exception
+#
+# To quote the docs:
+# >Each request sent is round-robined among all services, 
+# >and each reply received is matched with the last issued request.
 while True:
     print "Sending %s" % echoTxt
-    sock.send(echoTxt) # send the request
+    sock.send(echoTxt) # send the request to one of the connected peers
     print "Receiving..."
     echoedBack = sock.recv()
     print ">%s" % echoedBack
